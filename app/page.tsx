@@ -10,13 +10,22 @@ const ptMono = PT_Mono({ weight: "400", subsets: ["latin"] });
 
 export default function Home() {
   const [address, setAddress] = React.useState("");
-  const [tokens, setTokens] = React.useState([]);
+  const [tokens, setTokens] = React.useState({
+    atom: false,
+    eth: false,
+    usdc: false,
+    usdt: false,
+    note: false,
+  });
+
+  const [loading, setLoading] = React.useState(false);
+
   return (
     <main className={styles.main}>
       <div className={styles.card}>
         <h2 className="title">Canto Testnet Faucet</h2>
         <Image src="/logo.svg" alt="canto" width={100} height={60} />
-        <form action="" method="post">
+        <form action="/" method="post">
           <input
             className={styles.input}
             type="text"
@@ -31,18 +40,42 @@ export default function Home() {
             <div className={styles.item}>
               <div className="token-name">ATOM</div>
 
-              <Checkbox label="ATOM" onChange={() => {}} />
+              <Checkbox
+                label="ATOM"
+                onChange={() => {
+                  setTokens({
+                    ...tokens,
+                    atom: !tokens.atom,
+                  });
+                }}
+              />
             </div>
             <div className={styles.item}>
               <div className="token-name">ETH</div>
 
-              <Checkbox label="ETH" onChange={() => {}} />
+              <Checkbox
+                label="ETH"
+                onChange={() => {
+                  setTokens({
+                    ...tokens,
+                    eth: !tokens.eth,
+                  });
+                }}
+              />
             </div>
 
             <div className={styles.item}>
               <div className="token-name">USDC</div>
 
-              <Checkbox label="USDC" onChange={() => {}} />
+              <Checkbox
+                label="USDC"
+                onChange={() => {
+                  setTokens({
+                    ...tokens,
+                    usdc: !tokens.usdc,
+                  });
+                }}
+              />
             </div>
           </div>
 
@@ -50,12 +83,28 @@ export default function Home() {
             <div className={styles.item}>
               <div className="token-name">USDT</div>
 
-              <Checkbox label="USDT" onChange={() => {}} />
+              <Checkbox
+                label="USDT"
+                onChange={() => {
+                  setTokens({
+                    ...tokens,
+                    usdt: !tokens.usdt,
+                  });
+                }}
+              />
             </div>
             <div className={styles.item}>
               <div className="token-name">NOTE</div>
 
-              <Checkbox label="NOTE" onChange={() => {}} />
+              <Checkbox
+                label="NOTE"
+                onChange={() => {
+                  setTokens({
+                    ...tokens,
+                    note: !tokens.note,
+                  });
+                }}
+              />
             </div>
           </div>
 
@@ -63,8 +112,16 @@ export default function Home() {
             className={styles.button}
             type="submit"
             disabled={address.length < 15}
+            onSubmit={(e) => {
+              e.preventDefault();
+              console.log(address, tokens);
+            }}
+            onClick={() => {
+              setLoading(true);
+              console.log(address, tokens);
+            }}
           >
-            Request Funds
+            {loading ? "Sending..." : " Request Funds"}
           </button>
         </form>
 
