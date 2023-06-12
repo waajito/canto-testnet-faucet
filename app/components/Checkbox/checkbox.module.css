@@ -1,0 +1,14 @@
+.checkbox {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox__input {
+    position: relative;
+    width: 18px;
+    height: 18px;
+    border: 1px solid #515151;
+    border-radius: 4px;
+    cursor: pointer;
+    accent-color: #06fc99;
+}
