@@ -26,7 +26,7 @@ export default function FundsUI(props: Props) {
     <div className={styles.card}>
       <h2 className="title">Canto Testnet Faucet</h2>
       <Image src="/logo.svg" alt="canto" width={100} height={60} />
-      <form method="post" action={props.onSumbit}>
+      <form method="post">
         <input
           className={styles.input}
           type="text"
@@ -113,13 +113,10 @@ export default function FundsUI(props: Props) {
           className={styles.button}
           type="submit"
           disabled={address.length < 15}
-          onSubmit={(e) => {
-            e.preventDefault();
-            console.log(address, tokens);
-          }}
           onClick={() => {
             setLoading(true);
             console.log(address, tokens);
+            props.onSumbit({ address, tokens });
           }}
         >
           {loading ? "Sending..." : " Request Funds"}
