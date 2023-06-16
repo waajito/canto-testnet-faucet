@@ -1,6 +1,6 @@
 import FundsUI from "./fundComponent";
 import styles from "./page.module.css";
-import { ethers } from "ethers";
+import { ethers, Contract, Wallet } from "ethers";
 import abi from "../app/config/faucetABI.json";
 
 export default function Home() {
@@ -14,9 +14,9 @@ export default function Home() {
       throw new Error("PRIVATE_KEY is not defined");
     }
     //ethers signer using private key
-    const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
+    const signer = new Wallet(process.env.PRIVATE_KEY, provider);
 
-    const FaucetContract = new ethers.Contract(
+    const FaucetContract = new Contract(
       "0xDFd5Fab8372F5E92CC09A6a519cbAb1F97438cad",
       abi,
       signer
