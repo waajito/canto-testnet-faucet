@@ -21,7 +21,6 @@ export default function Home() {
       abi,
       signer
     );
-    console.log(formData.tokens.note);
     try {
       const tx = await FaucetContract.getNamesTokens(
         formData.address,
@@ -32,6 +31,8 @@ export default function Home() {
         formData.tokens.eth,
         formData.tokens.atom
       );
+
+      return "success";
     } catch (error: any) {
       console.error(error.info.error.message);
     }
