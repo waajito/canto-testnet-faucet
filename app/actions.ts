@@ -28,6 +28,7 @@ export async function sendFunds(formData: any) {
       formData.tokens.eth,
       formData.tokens.atom
     );
+    return true;
   } catch (error: any) {
     console.error(error);
   }
