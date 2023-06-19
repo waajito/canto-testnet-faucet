@@ -29,6 +29,6 @@ export async function sendFunds(formData: any) {
       formData.tokens.atom
     );
   } catch (error: any) {
-    console.error(error.info.error.message);
+    console.error(error);
   }
 }
