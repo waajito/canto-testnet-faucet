@@ -5,12 +5,11 @@ import styles from "./page.module.css";
 import Image from "next/image";
 import { PT_Mono } from "next/font/google";
 import React from "react";
+import { sendFunds } from "./actions";
+
 const ptMono = PT_Mono({ weight: "400", subsets: ["latin"] });
 
-interface Props {
-  onSubmit: (data: any) => void;
-}
-export default function FundsUI(props: Props) {
+export default function FundsUI() {
   const [address, setAddress] = React.useState("");
   const [tokens, setTokens] = React.useState({
     atom: false,
@@ -22,7 +21,7 @@ export default function FundsUI(props: Props) {
   });
 
   const [loading, setLoading] = React.useState(false);
-
+  const [message, setMessage] = React.useState("Request Funds");
   const isAddress = (address: string) => {
     if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
       // check if it has the basic requirements of an address
@@ -41,7 +40,18 @@ export default function FundsUI(props: Props) {
     <div className={styles.card}>
       <h2 className="title">Canto Testnet Faucet</h2>
       <Image src="/logo.svg" alt="canto" width={100} height={60} />
-      <form action={props.onSubmit}>
+      <form
+        action={() => {
+          sendFunds({ address, tokens }).then((res) => {
+            setLoading(false);
+            if (res.status === 200) {
+              setMessage("Funds Sent");
+            } else {
+              setMessage("Something went wrong");
+            }
+          });
+        }}
+      >
         <input
           className={styles.input}
           type="text"
@@ -171,7 +181,7 @@ export default function FundsUI(props: Props) {
         <input
           className={styles.button}
           type="submit"
-          value={loading ? "Sending..." : " Request Funds"}
+          value={loading ? "Sending..." : message}
           disabled={address.length < 15}
           onClick={(e) => {
             // e.preventDefault();
