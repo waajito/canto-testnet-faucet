@@ -8,7 +8,7 @@ import React from "react";
 const ptMono = PT_Mono({ weight: "400", subsets: ["latin"] });
 
 interface Props {
-  onSumbit: (data: any) => void;
+  onSubmit: (data: any) => void;
 }
 export default function FundsUI(props: Props) {
   const [address, setAddress] = React.useState("");
@@ -18,15 +18,30 @@ export default function FundsUI(props: Props) {
     usdc: false,
     usdt: false,
     note: false,
+    canto: false,
   });
 
   const [loading, setLoading] = React.useState(false);
+
+  const isAddress = (address: string) => {
+    if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+      // check if it has the basic requirements of an address
+      return false;
+    } else if (
+      /^(0x)?[0-9a-f]{40}$/.test(address) ||
+      /^(0x)?[0-9A-F]{40}$/.test(address)
+    ) {
+      // If it's all small caps or all all caps, return true
+      return true;
+    }
+    return false;
+  };
 
   return (
     <div className={styles.card}>
       <h2 className="title">Canto Testnet Faucet</h2>
       <Image src="/logo.svg" alt="canto" width={100} height={60} />
-      <form method="post">
+      <form>
         <input
           className={styles.input}
           type="text"
@@ -35,6 +50,7 @@ export default function FundsUI(props: Props) {
           placeholder="Enter The Address"
           autoComplete="off"
           value={address}
+          required
           onChange={(e) => setAddress(e.target.value)}
         />
         <div className={styles["tokens-grid"]}>
@@ -95,6 +111,19 @@ export default function FundsUI(props: Props) {
             />
           </div>
           <div className={styles.item}>
+            <div className="token-name">Canto</div>
+
+            <Checkbox
+              label="Canto"
+              onChange={() => {
+                setTokens({
+                  ...tokens,
+                  canto: !tokens.canto,
+                });
+              }}
+            />
+          </div>
+          <div className={styles.item}>
             <div className="token-name">NOTE</div>
 
             <Checkbox
@@ -108,15 +137,46 @@ export default function FundsUI(props: Props) {
             />
           </div>
         </div>
+        <div className={styles["balance-container"]}>
+          <div className={styles["balance-grid"]}>
+            <div className={styles.item}>
+              <div>Atom : </div>
+              <span className={styles["item-balance"]}>0.00</span>
+            </div>
+            <div className={styles.item}>
+              <div>ETH : </div>
+              <span className={styles["item-balance"]}>0.00</span>
+            </div>
+            <div className={styles.item}>
+              <div>USDC : </div>
+              <span className={styles["item-balance"]}>0.00</span>
+            </div>
+          </div>
+          <div className={styles["balance-grid"]}>
+            <div className={styles.item}>
+              <div>USDT : </div>
+              <span className={styles["item-balance"]}>0.00</span>
+            </div>
+            <div className={styles.item}>
+              <div>Canto : </div>
+              <span className={styles["item-balance"]}>0.00</span>
+            </div>
+            <div className={styles.item}>
+              <div>Note : </div>
+              <span className={styles["item-balance"]}>0.00</span>
+            </div>
+          </div>
+        </div>
 
         <button
           className={styles.button}
           type="submit"
           disabled={address.length < 15}
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault();
             setLoading(true);
-            console.log(address, tokens);
-            props.onSumbit({ address, tokens });
+            props.onSubmit({ address, tokens });
+            setLoading(false);
           }}
         >
           {loading ? "Sending..." : " Request Funds"}

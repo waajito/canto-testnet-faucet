@@ -86,17 +86,30 @@
     margin: 2rem 0;
 }
 
+.balance-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.balance-container {
+    border: 1px solid #2b2b2b;
+    border-radius: 8px;
+    padding: 0px 16px;
+    background-color: #111;
+    margin-bottom: 2rem;
+    font-size: 14px;
+    font-family: "Courier New", Courier, monospace;
+}
+
+.item-balance {
+    color: #888;
+}
 .item {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 80px;
-}
-
-.token-name {
-}
-
-.token-checkbox {
+    gap: 1rem;
 }
 
 /* Enable hover only on non-touch devices */
