@@ -3,7 +3,7 @@
 import { ethers, Contract, Wallet } from "ethers";
 import abi from "../app/config/faucetABI.json";
 
-export async function sendFunds(formData: any) {
+export async function sendFunds(formData: any): Promise<string> {
   //ethers provider using RPC URL
   const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 
@@ -14,23 +14,24 @@ export async function sendFunds(formData: any) {
   const signer = new Wallet(process.env.PRIVATE_KEY, provider);
 
   const FaucetContract = new Contract(
-    "0xDFd5Fab8372F5E92CC09A6a519cbAb1F97438cad",
+    "0x53f378F4a4bbc427C1860e5736127128F33b03Ad",
     abi,
     signer
   );
   try {
-    // FaucetContract.getNamesTokens(
-    //   formData.address,
-    //   ethers.parseUnits("10", 18),
-    //   formData.tokens.note,
-    //   formData.tokens.usdc,
-    //   formData.tokens.usdt,
-    //   formData.tokens.eth,
-    //   formData.tokens.atom
-    // );
-    console.log("sending funds");
-    return "success";
+    FaucetContract.getNamedTokens(
+      formData.address,
+      ethers.parseUnits("10", 18),
+      formData.tokens.note,
+      formData.tokens.usdc,
+      formData.tokens.usdt,
+      formData.tokens.eth,
+      formData.tokens.atom,
+      formData.tokens.canto
+    );
+    return "sent funds successfully";
   } catch (error: any) {
     console.error(error);
   }
+  return "unable to send funds";
 }
