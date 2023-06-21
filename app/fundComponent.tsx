@@ -147,7 +147,7 @@ export default function FundsUI() {
             />
           </div>
         </div>
-        <div className={styles["balance-container"]}>
+        {/* <div className={styles["balance-container"]}>
           <div className={styles["balance-grid"]}>
             <div className={styles.item}>
               <div>Atom : </div>
@@ -176,7 +176,7 @@ export default function FundsUI() {
               <span className={styles["item-balance"]}>0.00</span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         <input
           className={styles.button}
