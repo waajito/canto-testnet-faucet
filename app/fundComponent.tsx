@@ -41,7 +41,7 @@ export default function FundsUI(props: Props) {
     <div className={styles.card}>
       <h2 className="title">Canto Testnet Faucet</h2>
       <Image src="/logo.svg" alt="canto" width={100} height={60} />
-      <form>
+      <form action={props.onSubmit}>
         <input
           className={styles.input}
           type="text"
@@ -168,19 +168,19 @@ export default function FundsUI(props: Props) {
           </div>
         </div>
 
-        <button
+        <input
           className={styles.button}
           type="submit"
+          value={loading ? "Sending..." : " Request Funds"}
           disabled={address.length < 15}
           onClick={(e) => {
-            e.preventDefault();
+            // e.preventDefault();
+            console.log("submitting");
+
             setLoading(true);
-            props.onSubmit({ address, tokens });
-            setLoading(false);
+            // props.onSubmit({ address, tokens });
           }}
-        >
-          {loading ? "Sending..." : " Request Funds"}
-        </button>
+        />
       </form>
 
       <p className={styles.description}>

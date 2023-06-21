@@ -19,16 +19,17 @@ export async function sendFunds(formData: any): Promise<string> {
     signer
   );
   try {
-    FaucetContract.getNamedTokens(
-      formData.address,
-      ethers.parseUnits("10", 18),
-      formData.tokens.note,
-      formData.tokens.usdc,
-      formData.tokens.usdt,
-      formData.tokens.eth,
-      formData.tokens.atom,
-      formData.tokens.canto
-    );
+    // FaucetContract.getNamedTokens(
+    //   formData.address,
+    //   ethers.parseUnits("10", 18),
+    //   formData.tokens.note,
+    //   formData.tokens.usdc,
+    //   formData.tokens.usdt,
+    //   formData.tokens.eth,
+    //   formData.tokens.atom,
+    //   formData.tokens.canto
+    // );
+    console.log(formData);
     return "sent funds successfully";
   } catch (error: any) {
     console.error(error);
