@@ -22,7 +22,7 @@ export default function FundsUI() {
     canto: false,
   });
 
-  const [balTokens, setBalTokens] = React.useState({
+  const [balTokens, setBalTokens] = React.useState<Record<string, string>>({
     atom: "0",
     eth: "0",
     usdc: "0",
@@ -36,39 +36,37 @@ export default function FundsUI() {
 
   //connect wallet
   const getBalances = async () => {
-    console.log(balTokens);
-
+    //connecting to testnet
     const provider = new ethers.JsonRpcProvider(
       "https://canto-testnet.plexnode.wtf"
     );
 
+    //checking if address is valid
     if (ethers.isAddress(address)) {
-      provider.on("block", (blockNumber) => {
-        tokensConfig.forEach((token) => {
+      //checking balances per token every time a new block is validated
+      provider.on("block", async (blockNumber) => {
+        //map tokens to get balances promises
+        const bal = tokensConfig.map(async (token) => {
           const contract = new ethers.Contract(token.address, abi, provider);
-
-          contract.balanceOf(address).then((balance) => {
-            console.log(
-              token.name + " : " + ethers.formatUnits(balance, token.decimals)
-            );
-            setBalTokens({
-              ...balTokens,
-              [token.symbol.toLowerCase()]: ethers.formatUnits(
-                balance,
-                token.decimals
-              ),
-            });
-
-            console.log({
-              ...balTokens,
-              [token.symbol.toLowerCase()]: ethers.formatUnits(
-                balance,
-                token.decimals
-              ),
-            });
-          });
+          const balance = await contract.balanceOf(address);
+          return {
+            [token.symbol.toLowerCase()]: ethers.formatUnits(
+              balance,
+              token.decimals
+            ),
+          };
         });
-        console.log(balTokens);
+
+        //get balances from promises
+        const balances = await Promise.all(bal);
+
+        //reduce balances to one object
+        const balanceReducer = balances.reduce((prev, curr) => {
+          return { ...prev, ...curr };
+        }, {});
+
+        //set balances
+        setBalTokens(balanceReducer);
       });
     } else {
       setIsValidAddress(ethers.isAddress(address));
@@ -280,7 +278,9 @@ export default function FundsUI() {
           <div className={styles["balance-grid"]}>
             <div className={styles.item}>
               <div>Atom : </div>
-              <span className={styles["item-balance"]}>{balTokens.atom}</span>
+              <span className={styles["item-balance"]}>
+                {balTokens["atom"]}
+              </span>
             </div>
             <div className={styles.item}>
               <div>ETH : </div>
