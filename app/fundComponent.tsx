@@ -6,11 +6,13 @@ import Image from "next/image";
 import { PT_Mono } from "next/font/google";
 import React from "react";
 import { sendFunds } from "./actions";
-
+import { ethers } from "ethers";
+import { abi, tokens as tokensConfig } from "./config/tokens";
 const ptMono = PT_Mono({ weight: "400", subsets: ["latin"] });
 
 export default function FundsUI() {
   const [address, setAddress] = React.useState("");
+  const [isValidAddress, setIsValidAddress] = React.useState(false);
   const [tokens, setTokens] = React.useState({
     atom: false,
     eth: false,
@@ -20,26 +22,153 @@ export default function FundsUI() {
     canto: false,
   });
 
+  const [balTokens, setBalTokens] = React.useState({
+    atom: "0",
+    eth: "0",
+    usdc: "0",
+    usdt: "0",
+    note: "0",
+    canto: "0",
+  });
+
   const [loading, setLoading] = React.useState(false);
   const [message, setMessage] = React.useState("Request Funds");
-  const isAddress = (address: string) => {
-    if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
-      // check if it has the basic requirements of an address
-      return false;
-    } else if (
-      /^(0x)?[0-9a-f]{40}$/.test(address) ||
-      /^(0x)?[0-9A-F]{40}$/.test(address)
-    ) {
-      // If it's all small caps or all all caps, return true
-      return true;
+
+  //connect wallet
+  const getBalances = async () => {
+    console.log(balTokens);
+
+    const provider = new ethers.JsonRpcProvider(
+      "https://canto-testnet.plexnode.wtf"
+    );
+
+    if (ethers.isAddress(address)) {
+      provider.on("block", (blockNumber) => {
+        tokensConfig.forEach((token) => {
+          const contract = new ethers.Contract(token.address, abi, provider);
+
+          contract.balanceOf(address).then((balance) => {
+            console.log(
+              token.name + " : " + ethers.formatUnits(balance, token.decimals)
+            );
+            setBalTokens({
+              ...balTokens,
+              [token.symbol.toLowerCase()]: ethers.formatUnits(
+                balance,
+                token.decimals
+              ),
+            });
+
+            console.log({
+              ...balTokens,
+              [token.symbol.toLowerCase()]: ethers.formatUnits(
+                balance,
+                token.decimals
+              ),
+            });
+          });
+        });
+        console.log(balTokens);
+      });
+    } else {
+      setIsValidAddress(ethers.isAddress(address));
     }
-    return false;
   };
 
+  async function addTestNetwork() {
+    if (window.ethereum) {
+      try {
+        await window.ethereum.request({
+          method: "wallet_switchEthereumChain",
+          params: [{ chainId: "0x1E15" }],
+        });
+      } catch (error: any) {
+        console.log(error.code);
+        if (error.code === 4902) {
+          window.ethereum
+            .request({
+              method: "wallet_addEthereumChain",
+              params: [
+                {
+                  chainId: "0x1E15",
+                  rpcUrls: ["https://canto-testnet.plexnode.wtf"],
+                  chainName: "Canto Testnet",
+                  nativeCurrency: {
+                    name: "Canto Coin",
+                    symbol: "CANTO",
+                    decimals: 18,
+                  },
+                  blockExplorerUrls: ["https://testnet.tuber.build"],
+                },
+              ],
+            })
+
+            .catch((error: unknown) => {
+              console.error(error);
+            });
+        }
+      }
+    }
+  }
+
+  //func to add testnet tokens to metamask
+  async function addTokens() {
+    for (const tokenObj of tokensConfig) {
+      try {
+        if (tokenObj.symbol != "Canto") {
+          //@ts-ignore
+          ethereum.request({
+            method: "wallet_watchAsset",
+            params: {
+              type: "ERC20", // Initially only supports ERC20, but eventually more!
+              options: {
+                address: tokenObj.address, // The address that the token is at.
+                symbol: tokenObj.symbol.slice(0, 11), // A ticker symbol or shorthand, up to 5 chars.
+                decimals: tokenObj.decimals, // The number of decimals in the token
+                image: tokenObj.logoURI, // A string url of the token logo
+              },
+            },
+          });
+        }
+      } catch (error) {
+        // console.log(error)
+      }
+    }
+  }
   return (
     <div className={styles.card}>
       <h2 className="title">Canto Testnet Faucet</h2>
       <Image src="/logo.svg" alt="canto" width={100} height={60} />
+
+      <div className="row">
+        <button
+          className={styles.button}
+          style={{
+            minWidth: "10rem",
+          }}
+          onClick={addTokens}
+        >
+          import test tokens
+        </button>
+        <button
+          className={styles.button}
+          style={{
+            minWidth: "10rem",
+          }}
+          onClick={addTestNetwork}
+        >
+          add network
+        </button>
+        <button
+          className={styles.button}
+          style={{
+            minWidth: "10rem",
+          }}
+          onClick={getBalances}
+        >
+          get balances
+        </button>
+      </div>
       <form
         action={() => {
           sendFunds({ address, tokens }).then((res) => {
@@ -147,36 +276,36 @@ export default function FundsUI() {
             />
           </div>
         </div>
-        {/* <div className={styles["balance-container"]}>
+        <div className={styles["balance-container"]}>
           <div className={styles["balance-grid"]}>
             <div className={styles.item}>
               <div>Atom : </div>
-              <span className={styles["item-balance"]}>0.00</span>
+              <span className={styles["item-balance"]}>{balTokens.atom}</span>
             </div>
             <div className={styles.item}>
               <div>ETH : </div>
-              <span className={styles["item-balance"]}>0.00</span>
+              <span className={styles["item-balance"]}>{balTokens.eth}</span>
             </div>
             <div className={styles.item}>
               <div>USDC : </div>
-              <span className={styles["item-balance"]}>0.00</span>
+              <span className={styles["item-balance"]}>{balTokens.usdc}</span>
             </div>
           </div>
           <div className={styles["balance-grid"]}>
             <div className={styles.item}>
               <div>USDT : </div>
-              <span className={styles["item-balance"]}>0.00</span>
+              <span className={styles["item-balance"]}>{balTokens.usdt}</span>
             </div>
             <div className={styles.item}>
               <div>Canto : </div>
-              <span className={styles["item-balance"]}>0.00</span>
+              <span className={styles["item-balance"]}>{balTokens.canto}</span>
             </div>
             <div className={styles.item}>
               <div>Note : </div>
-              <span className={styles["item-balance"]}>0.00</span>
+              <span className={styles["item-balance"]}>{balTokens.note}</span>
             </div>
           </div>
-        </div> */}
+        </div>
 
         <input
           className={styles.button}
