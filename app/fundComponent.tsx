@@ -4,10 +4,12 @@ import { Checkbox } from "./components/Checkbox/Checkbox";
 import styles from "./page.module.css";
 import Image from "next/image";
 import { PT_Mono } from "next/font/google";
-import React, { useEffect } from "react";
+import React, { createRef, useEffect, useRef } from "react";
 import { sendFunds } from "./actions";
 import { ethers, isAddress } from "ethers";
 import { abi, tokens as tokensConfig } from "./config/tokens";
+import ReCAPTCHA from "react-google-recaptcha";
+
 const ptMono = PT_Mono({ weight: "400", subsets: ["latin"] });
 
 export default function FundsUI() {
@@ -21,6 +23,8 @@ export default function FundsUI() {
     note: false,
     canto: false,
   });
+
+  const [captcha, setCaptcha] = React.useState("");
 
   const [balanceStatus, setBalanceStatus] = React.useState<
     "NONE" | "LOADING" | "SUCCESS" | "ERROR"
@@ -243,13 +247,14 @@ export default function FundsUI() {
           <form
             action={() => {
               console.log("sending funds");
-              sendFunds({ address, tokens }).then((res) => {
+              sendFunds({ address, tokens, captcha }).then((res) => {
                 setLoading(false);
                 if (res.status === 200) {
                   setOnSuccess(true);
                   setMessage("Funds Sent");
                 } else {
-                  setMessage("We are running low on funds.");
+                  console.log(res.message);
+                  setMessage(res.message);
                 }
               });
             }}
@@ -265,6 +270,7 @@ export default function FundsUI() {
               required
               onChange={(e) => setAddress(e.target.value)}
             />
+
             <div className={styles["tokens-grid"]}>
               <div className={styles.item}>
                 <div className="token-name">ATOM</div>
@@ -389,7 +395,15 @@ export default function FundsUI() {
                 </div>
               </div>
             </div>
-
+            <div className={styles.recap}>
+              <ReCAPTCHA
+                //   size="invisible"
+                sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_KEY as string}
+                onChange={(e) => {
+                  setCaptcha(e ?? "");
+                }}
+              />
+            </div>
             <input
               className={styles.button}
               style={{
@@ -399,6 +413,8 @@ export default function FundsUI() {
               value={
                 !ethers.isAddress(address)
                   ? "Enter Address"
+                  : captcha.length < 10
+                  ? "Complete Captcha"
                   : balanceStatus === "NONE"
                   ? "Get Balances"
                   : balanceStatus === "LOADING"
@@ -409,6 +425,7 @@ export default function FundsUI() {
               }
               disabled={
                 !ethers.isAddress(address) ||
+                captcha.length < 10 ||
                 balanceStatus === "LOADING" ||
                 (balanceStatus === "SUCCESS" && totalSelectedTokens <= 0)
               }
