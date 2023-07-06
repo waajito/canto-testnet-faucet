@@ -249,7 +249,7 @@ export default function FundsUI() {
                   setOnSuccess(true);
                   setMessage("Funds Sent");
                 } else {
-                  setMessage("Something went wrong");
+                  setMessage("We are running low on funds.");
                 }
               });
             }}
