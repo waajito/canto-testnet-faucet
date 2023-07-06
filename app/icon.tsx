@@ -28,7 +28,7 @@ export default function Icon() {
           color: "white",
         }}
       >
-        <Image src="public/logo.svg" alt="canto" />
+        <Image src="/logo.svg" alt="canto" />
       </div>
     ),
     // ImageResponse options
