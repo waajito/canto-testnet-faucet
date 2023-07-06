@@ -5,7 +5,7 @@ import { ImageResponse } from "next/server";
 
 export const runtime = "edge";
 
-const image = fetch(new URL("./bg.png", import.meta.url)).then((res) =>
+const image = fetch(new URL("/bg.png", import.meta.url)).then((res) =>
   res.arrayBuffer()
 );
 
