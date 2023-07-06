@@ -10,8 +10,6 @@ import { ethers, isAddress } from "ethers";
 import { abi, tokens as tokensConfig } from "./config/tokens";
 import ReCAPTCHA from "react-google-recaptcha";
 
-const ptMono = PT_Mono({ weight: "400", subsets: ["latin"] });
-
 export default function FundsUI() {
   const [address, setAddress] = React.useState("");
   const [isValidAddress, setIsValidAddress] = React.useState(false);
