@@ -38,6 +38,16 @@ export default function RootLayout({
           sizes="<generated>"
         />
         <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:site" content="@canto_io" />
+        <meta name="twitter:creator" content="@canto_io" />
+        <meta property="og:url" content="https://testnet.cantofaucet.com" />
+        <meta property="og:title" content={metadata.title} />
+        <meta property="og:description" content={metadata.description} />
+        <meta property="og:image" content="/bg.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="description" content={metadata.description} />
+        <meta name="keywords" content={metadata.keywords.join(", ")} />
       </head>
       <body className={silkscreen.className}>{children}</body>
     </html>
