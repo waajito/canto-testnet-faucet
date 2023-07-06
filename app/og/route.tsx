@@ -5,8 +5,8 @@ import { ImageResponse } from "next/server";
 
 export const runtime = "edge";
 
-const image = fetch(new URL("/bg.png", import.meta.url)).then((res) =>
-  res.arrayBuffer()
+const image = fetch(new URL("../..public/bg.png", import.meta.url)).then(
+  (res) => res.arrayBuffer()
 );
 
 export async function GET() {
@@ -25,7 +25,7 @@ export async function GET() {
         }}
       >
         {/* @ts-ignore */}
-        <Image width="256" height="256" src={imageData} />
+        <img width="256" height="256" src={imageData} />
       </div>
     ),
     {
