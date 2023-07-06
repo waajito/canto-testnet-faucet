@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { ImageResponse } from "next/server";
 
 // Route segment config
@@ -28,7 +27,7 @@ export default function Icon() {
           color: "white",
         }}
       >
-        <Image src="/logo.svg" alt="canto" />
+        A
       </div>
     ),
     // ImageResponse options
