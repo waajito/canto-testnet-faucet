@@ -450,7 +450,7 @@ export default function FundsUI() {
                 color: "#06fc99",
               }}
             >
-              0x4A2812DAf2432EAD79D2c20Ba84d65CbfA524A4D
+              0x53f378F4a4bbc427C1860e5736127128F33b03Ad
             </span>
           </p>
         </>
