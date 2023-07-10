@@ -44,7 +44,7 @@ export async function sendFunds(formData: any): Promise<{
 
     await FaucetContract.getNamedTokens(
       formData.address,
-      ethers.parseUnits("10", 18),
+      ethers.parseUnits("100", 18),
       formData.tokens.note,
       formData.tokens.usdc,
       formData.tokens.usdt,
